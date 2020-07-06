@@ -32,45 +32,33 @@ class UserAPIView(APIView):
         return APIResponse(400,False)
 
 
-class EmployeeView(ListModelMixin,CreateModelMixin,GenericAPIView,UpdateModelMixin,DestroyModelMixin,RetrieveModelMixin):
+class EmployeeView(ListModelMixin,CreateModelMixin,GenericAPIView,DestroyModelMixin,RetrieveModelMixin):
     queryset = Employee.objects.all()
     serializer_class = EmployeeModelSerializer
     lookup_field = "id"
 
     def get(self, request, *args, **kwargs):
         emp_id = kwargs.get("id")
-        # if "emp_id" in kwargs:
-        #     return self.retrieve(request, *args, **kwargs)
-        # else:
         user_list = self.list(request, *args, **kwargs)
         return APIResponse(200, True, results=user_list.data)
 
     # 增加
     def post(self, request, *args, **kwargs):
-        # request_data = request.data
-        user_obj = self.create(request, *args, **kwargs)
-        return APIResponse(200, True, results=user_obj.data)
+        emp_id = kwargs.get("id")
+        print(emp_id)
+        if "emp_id" in kwargs:
+            emp_obj = Employee.objects.get(pk=emp_id)
+            emp_obj.delete()
+            response = self.create(request, *args, **kwargs)
+            return APIResponse(200, True, results=response.data)
+        else:
+            user_obj = self.create(request, *args, **kwargs)
+            return APIResponse(200, True, results=user_obj.data)
 
     # 删除
     def delete(self, request, *args, **kwargs):
         emp_id = kwargs.get("id")
         print(emp_id)
-        # try:
-        #     response = self.destroy(request, *args, **kwargs)
-        #     print(response)
-        #     return APIResponse(200, True, results=response.data)
-        # except:
-        #     return APIResponse(400, "删除失败或图书不存在",)
         response = self.destroy(request, *args, **kwargs)
         if response:
             return APIResponse(200, True, results=response.data)
-
-    # 修改
-    def put(self, request, *args, **kwargs):
-        response = self.update(request, *args, **kwargs)
-        return APIResponse(200, True, results=response.data)
-
-
-# class RegisterView(ViewSet):
-#     def check_user(self,request,*args,**kwargs):
-#         return APIResponse("ok")

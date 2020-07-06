@@ -59,18 +59,18 @@ class UserModelSerializer(serializers.ModelSerializer):
         return attrs
 
 
-class EmployeeListSerializer(serializers.ListSerializer):
-    def update(self, instance, validated_data):
-        for id, obj in enumerate(instance):
-            self.child.update(obj, validated_data[id])
-        return instance
+# class EmployeeListSerializer(serializers.ListSerializer):
+#     def update(self, instance, validated_data):
+#         for id, obj in enumerate(instance):
+#             self.child.update(obj, validated_data[id])
+#         return instance
 
 
 class EmployeeModelSerializer(ModelSerializer):
     class Meta:
         model = Employee
         fields = "__all__"
-        list_serializer_class = EmployeeListSerializer
+        # list_serializer_class = EmployeeListSerializer
         extra_kwargs = {
             "emp_name": {
                 "required": True,
